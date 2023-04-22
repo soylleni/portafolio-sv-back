@@ -7,14 +7,14 @@ const conectBD = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'root',
-    database: 'reqs'
+    database: 'reqs_db'
 })
 
 /* GET home page. */
 router.get('/', (req, res) => {
     const {user, password} = req.body
     const values = [user, password]
-    const sql = 'select * from providers'
+    const sql = 'select * from reqs_db'
 
     conectBD.query(sql, values,(err,result) => {
         if(err) {
@@ -23,22 +23,24 @@ router.get('/', (req, res) => {
             if (result.length > 0) {
                 res.status(200).send(result)
             } else {
-                res.status(400).send('No hay proveedores registrados.')
+                res.status(400).send('No hay solicitudes registradas.')
             }
         }
     })
 });
 
 router.post('/crear-req', (req, res) => {
-    const sql = 'INSERT INTO providers SET ?'
+    const sql = 'INSERT INTO reqs_db SET ?'
 
-    const providerObj = {
+    const reqsObj = {
         nombre: req.body.nombre,
-        usuario: req.body.usuario,
-        rol: req.body.rol
+        correo: req.body.correo,
+        tipoSolicitud: req.body.tipoSolicitud,
+        comentario: req.body.comentario,
+        estado: 'Activo'
     }
 
-    conectBD.query(sql, providerObj, error  => {
+    conectBD.query(sql, reqsObj, error  => {
         if (error) throw error
 
         res.send('La solicitud fue creada con exito')
@@ -47,25 +49,25 @@ router.post('/crear-req', (req, res) => {
 
 router.put('/actualizar-req/:reqId', async(req,res) =>{
     console.log('req.params',req.params)
-    const id = req.params.providerId
+    const id = req.params.idreqs_db
 
     const {nombre,usuario,rol} = req.body
 
-    const sql = `UPDATE providers SET nombre = '${nombre}', usuario = '${usuario}', rol = '${rol}'
-        where idproviders = ${id}
+    const sql = `UPDATE providers SET estado = 'Inactivo'
+        where idreqs_db = ${id}
     `
     await conectBD.query(sql, error => {
         if (error) throw error
 
-        res.send(`Usuario con el id: ${id}, fue actualizado con exito.`)
+        res.send(`Usuario con el id: ${id}, fue procesado con exito.`)
     })
 })
 
 router.put('/borrar-req/:reqId', async(req,res) =>{
     console.log('req.params',req.params)
-    const id = req.params.providerId
+    const id = req.params.idreqs_db
 
-    const sql = `DELETE from providers  where idproviders = ${id}
+    const sql = `DELETE from providers  where idreqs_db = ${id}
     `
     await conectBD.query(sql, error => {
         if (error) throw error
