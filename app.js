@@ -3,15 +3,14 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const mysql = require('mysql');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var adminRouter = require('./routes/reqsAdmin');
-const loginRouter = require('./routes/login');
-
+var loginRouter = require('./routes/login');
+var contactoRouter = require('./routes/contacto');
 
 var app = express();
+const mysql = require('mysql');
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -32,8 +31,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/reqsAdmin', adminRouter);
+app.use('/contacto', contactoRouter);
 app.use('/login', loginRouter);
 
 // catch 404 and forward to error handler
